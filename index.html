@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DriverCam Ultra Pro - Nguyễn Hải Duy</title>
+    <title>Hệ Thống Tải App Lưu Trữ - Nguyễn Hải Duy</title>
     
-    <!-- Google Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- AOS Animation Library CSS -->
+    <!-- AOS Library cho hiệu ứng cuộn mượt -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
-        /* --- THIẾT LẬP HỆ THỐNG GIAO DIỆN --- */
+        /* --- THIẾT LẬP GRAPHIC HỆ THỐNG THEO APP THỰC TẾ --- */
         :root {
-            --primary: #ff7b00;
-            --primary-glow: rgba(255, 123, 0, 0.4);
-            --bg-deep: #060913;
-            --bg-surface: rgba(15, 23, 42, 0.6);
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
+            --primary-blue: #0a1f44; /* Màu xanh đậm của nút Chụp Ảnh Mới */
+            --bg-light: #f4f6fa;
+            --card-purple: #f3efff; /* Thẻ ảnh đã lưu Google Cloud */
+            --card-salmon: #ffe5e2; /* Thẻ chờ tải lên chưa đồng bộ */
+            --text-dark: #1e293b;
+            --text-sub: #64748b;
+            --green-online: #10b981;
+            --ai-bg: #030a1c; /* Màu nền tối của thẻ AI Copilot */
         }
 
         * {
@@ -28,604 +29,665 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            scroll-behavior: smooth;
         }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
+            background-color: var(--bg-light);
+            color: var(--text-dark);
             overflow-x: hidden;
             position: relative;
-        }
-
-        /* CANVAS ĐỂ CHẠY HẠT ÁNH SÁNG NỀN */
-        #particles-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Đèn Neon Nền */
-        .glow-sphere {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
-            filter: blur(90px);
-            z-index: -2;
-        }
-        .sphere-1 { width: 700px; height: 700px; top: -10%; right: -10%; animation: floatBg 12s infinite alternate; }
-        .sphere-2 { width: 500px; height: 500px; top: 40%; left: -10%; animation: floatBg 15s infinite alternate-reverse; }
-
-        @keyframes floatBg {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(60px, 40px) scale(1.1); }
+            padding-bottom: 60px;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 1.5rem;
         }
 
-        /* HEADER */
+        /* --- WEB HEADER --- */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 2rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: #fff;
+            padding: 1rem 2rem;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
-
         .logo {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 800;
+            color: var(--primary-blue);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
-
-        .logo span { color: var(--primary); }
-
-        .badge-vip {
-            background: linear-gradient(135deg, #ffe600, var(--primary));
-            color: #000;
-            font-size: 0.7rem;
-            font-weight: 800;
-            padding: 4px 10px;
+        .logo span { color: #ef4444; }
+        
+        .author-badge {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 6px 14px;
             border-radius: 30px;
-            box-shadow: 0 0 15px var(--primary-glow);
+            box-shadow: 0 4px 10px rgba(0, 114, 255, 0.2);
         }
 
-        /* HERO SECTION */
+        /* --- HERO ZONE --- */
         .hero {
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 4rem;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 3rem;
             align-items: center;
-            padding: 6rem 0;
+            padding: 4rem 0;
         }
 
         @media (max-width: 968px) {
-            .hero { grid-template-columns: 1fr; text-align: center; gap: 3rem; }
-            .mockup-wrapper { order: -1; }
+            .hero { grid-template-columns: 1fr; text-align: center; }
+            .mockup-container { order: -1; }
         }
 
-        .hero-text h1 {
-            font-size: 3.5rem;
+        .hero-info h1 {
+            font-size: 3rem;
             font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 1.5rem;
+            color: var(--primary-blue);
+            line-height: 1.2;
+            margin-bottom: 1rem;
         }
-
-        /* Hiệu ứng chữ đổi màu */
-        .gradient-text {
-            background: linear-gradient(90deg, #fff, var(--primary), #fff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shineText 4s linear infinite;
-        }
-
-        @keyframes shineText {
-            to { background-position: 200% center; }
-        }
-
-        .hero-text p {
+        .hero-info p {
             color: var(--text-sub);
-            font-size: 1.2rem;
-            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
         }
 
-        /* DOWNLOAD CARD */
-        .download-card {
-            background: var(--bg-surface);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 28px;
-            padding: 2.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            transform-style: preserve-3d; /* Phục vụ cho nghiêng 3D */
+        /* WEB DOWNLOAD ACTION CARD */
+        .web-download-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.02);
+            margin-bottom: 2rem;
         }
-
-        .card-header {
+        .version-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
         }
-
-        .ver-tag {
-            background: rgba(255, 123, 0, 0.15);
-            color: var(--primary);
+        .version-badge {
+            background: #eff6ff;
+            color: #2563eb;
             padding: 6px 14px;
             border-radius: 10px;
             font-weight: 700;
             font-size: 0.9rem;
-            animation: pulseBorder 2s infinite;
+        }
+        .status-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--green-online);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
         }
 
-        @keyframes pulseBorder {
-            0% { box-shadow: 0 0 0 0 rgba(255, 123, 0, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 123, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 123, 0, 0); }
-        }
-
-        .btn-glow {
+        .btn-download-app {
             width: 100%;
             padding: 1.2rem;
-            background: linear-gradient(135deg, var(--primary), #d94100);
-            border: none;
-            border-radius: 18px;
+            background: var(--primary-blue);
             color: #fff;
-            font-size: 1.2rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.15rem;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            box-shadow: 0 10px 25px rgba(255, 123, 0, 0.4);
+            gap: 12px;
+            box-shadow: 0 10px 20px rgba(10, 31, 68, 0.2);
             text-decoration: none;
-            position: relative;
-            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        /* Hiệu ứng tia sáng quét ngang nút khi hover */
-        .btn-glow::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -60%; width: 30%; height: 200%;
-            background: rgba(255,255,255,0.3);
-            transform: rotate(30deg);
-            transition: none;
+        .btn-download-app:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(10, 31, 68, 0.3);
         }
-        .btn-glow:hover::after {
-            left: 140%;
-            transition: all 0.6s ease-in-out;
-        }
-
-        .btn-glow i { animation: bounce 2s infinite; }
+        .btn-download-app i { animation: bounce 2s infinite; }
 
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-6px); }
-            60% { transform: translateY(-3px); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
-        /* PROGRESS BAR */
-        .progress-box { display: none; margin-top: 1.5rem; }
-        .track { background: rgba(255, 255, 255, 0.05); height: 10px; border-radius: 20px; overflow: hidden; }
-        .fill { background: linear-gradient(90deg, var(--primary), #ffb700); width: 0%; height: 100%; border-radius: 20px; box-shadow: 0 0 10px var(--primary); }
-        .details-bar { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sub); margin-top: 8px; }
+        /* DOWNLOAD PROGRESS BAR */
+        .progress-area { display: none; margin-top: 1.5rem; }
+        .progress-bg { background: #e2e8f0; height: 10px; border-radius: 10px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #3b82f6, var(--primary-blue)); width: 0%; height: 100%; transition: width 0.1s ease; }
+        .progress-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sub); margin-top: 6px; }
 
-        /* MOCKUP PHONE 3D MOUSE TILT */
-        .mockup-wrapper { display: flex; justify-content: center; align-items: center; perspective: 1000px; }
-        .phone {
-            width: 300px;
-            height: 580px;
-            background: #000;
-            border: 10px solid #2e3a4e;
-            border-radius: 45px;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7);
+        /* --- MOCKUP ĐIỆN THOẠI TRỰC QUAN THEO ẢNH CHỤP APP MỚI --- */
+        .mockup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+        .phone-frame {
+            width: 340px;
+            height: 720px;
+            background: #fff;
+            border: 12px solid #1e293b;
+            border-radius: 40px;
+            box-shadow: 0 40px 60px -15px rgba(0,0,0,0.15);
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            position: relative;
             transform-style: preserve-3d;
-            transition: transform 0.1s ease; /* Chạy mượt theo chuột */
+            transition: transform 0.1s ease;
         }
 
-        .screen { flex: 1; background: #0b0f19; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; }
-        .img-box { background: #151f32; border-radius: 14px; display: flex; align-items: flex-end; padding: 8px; position: relative; overflow: hidden;}
+        /* Giao diện bên trong màn hình mô phỏng */
+        .phone-screen {
+            flex: 1;
+            background: #fdfdfd;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 14px;
+            overflow-y: auto;
+        }
+        .phone-screen::-webkit-scrollbar { display: none; } /* Ẩn scrollbar để mượt mà */
+
+        /* Top Bar của App */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+        .app-title { font-size: 1.35rem; font-weight: 800; color: var(--primary-blue); letter-spacing: -0.5px; }
+        .app-driver { font-size: 0.65rem; color: var(--text-sub); font-weight: 700; margin-top: 2px; text-transform: uppercase;}
         
-        /* Hiệu ứng quét lấp lánh trên ảnh giả lập */
-        .img-box::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            transform: skewX(-25deg);
-            animation: cardShine 3s infinite;
+        .avatar-circle {
+            width: 36px; height: 36px; background: #e0e7ff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: var(--primary-blue); position: relative;
         }
-        @keyframes cardShine { 0% { left: -100%; } 100% { left: 200%; } }
+        .avatar-circle::after {
+            content: ''; position: absolute; top: 1px; right: 1px;
+            width: 8px; height: 8px; background: #ef4444; border-radius: 50%;
+        }
 
-        .label { background: rgba(0,0,0,0.7); font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; width: 100%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-        .cam-btn { background: var(--primary); color: #000; text-align: center; padding: 12px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; }
-
-        /* SECTION: THỐNG KÊ SỐ LIỆU CHẠY ĐỘNG */
-        .stats-section {
+        /* Grid chứa 2 thẻ Ảnh đã lưu / Chờ tải lên */
+        .app-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 2rem;
-            padding: 3rem 2rem;
-            background: rgba(255, 255, 255, 0.01);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px solid rgba(255,255,255,0.05);
-            margin: 2rem 0;
-            text-align: center;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
-        .stat-card h2 { font-size: 2.5rem; color: var(--primary); font-weight: 800; margin-bottom: 0.5rem; }
-        .stat-card p { color: var(--text-sub); font-size: 0.95rem; }
+        .app-card { border-radius: 18px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; height: 85px;}
+        .card-cloud { background: var(--card-purple); }
+        .card-sync { background: var(--card-salmon); }
+        
+        .card-tag-mini { 
+            align-self: flex-end; font-size: 0.55rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: #fff;
+        }
+        .card-cloud .card-tag-mini { color: #6366f1; }
+        .card-sync .card-tag-mini { color: #f43f5e; }
 
-        /* SECTION: HƯỚNG DẪN CÀI ĐẶT APK */
-        .guide-section { padding: 4rem 0; }
-        .guide-section h2 { text-align: center; font-size: 2rem; margin-bottom: 3rem; font-weight: 800; }
-        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
-        .guide-step { background: var(--bg-surface); padding: 2rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); position: relative; transition: border 0.3s ease;}
-        .guide-step:hover { border-color: var(--primary); }
-        .step-number { position: absolute; top: -20px; left: 20px; width: 40px; height: 40px; background: var(--primary); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; box-shadow: 0 0 15px var(--primary-glow); }
-        .guide-step h3 { margin-top: 0.5rem; margin-bottom: 1rem; font-size: 1.2rem; }
-        .guide-step p { color: var(--text-sub); font-size: 0.95rem; }
+        .card-value { font-size: 1.4rem; font-weight: 800; line-height: 1; margin-top: 5px;}
+        .card-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 600; margin-top: 2px; }
 
-        /* SECTION: ĐÁNH GIÁ TÀI XẾ (MARQUEE) */
-        .review-section { padding: 4rem 0; overflow: hidden; position: relative; }
-        .review-section h2 { text-align: center; font-size: 2rem; margin-bottom: 3rem; font-weight: 800; }
-        .marquee-container { display: flex; gap: 2rem; width: max-content; animation: marquee 25s linear infinite; }
-        .marquee-container:hover { animation-play-state: paused; }
-        .review-card { background: #0f172a; padding: 1.5rem; border-radius: 16px; width: 350px; border: 1px solid rgba(255,255,255,0.05); }
-        .driver-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        /* Trạng thái mạng mạng online */
+        .app-network-status {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fff; padding: 10px 14px; border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02); border: 1px solid #f1f5f9;
+        }
+        .net-text { font-size: 0.72rem; color: var(--green-online); font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .toggle-switch { width: 34px; height: 20px; background: var(--green-online); border-radius: 20px; position: relative;}
+        .toggle-switch::after { content: ''; position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; }
 
-        /* FLOATING ACTION CHAT BUTTON */
-        .floating-chat {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
-            border-radius: 50%;
+        /* Khung thông báo điều hành điều phối (MOMO DONATE) */
+        .app-notice-box {
+            background: #fff; border-radius: 14px; padding: 12px;
+            border: 1px solid #e0f2fe; display: flex; gap: 10px; align-items: flex-start;
+        }
+        .notice-icon {
+            width: 28px; height: 28px; background: #e0f2fe; color: #0284c7;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0;
+        }
+        .notice-content h4 { font-size: 0.7rem; font-weight: 800; color: var(--primary-blue); text-transform: uppercase; margin-bottom: 2px;}
+        .notice-content p { font-size: 0.62rem; color: #334155; line-height: 1.4; font-weight: 500; }
+
+        /* Nút màu xanh navy chụp ảnh mới */
+        .btn-app-camera {
+            background: var(--primary-blue); color: #fff; border-radius: 14px;
+            padding: 12px; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 4px 12px rgba(10, 31, 68, 0.25);
+        }
+        .camera-icon-box { font-size: 1.2rem; margin-left: 4px; }
+        .camera-text h4 { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; }
+        .camera-text p { font-size: 0.58rem; color: #94a3b8; font-weight: 500; margin-top: 1px; }
+
+        /* --- KHỐI TRỢ LÝ TÀI XẾ AI COPILOT MỚI CẬP NHẬT --- */
+        .app-ai-copilot {
+            background: var(--ai-bg);
+            border-radius: 16px;
+            padding: 14px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 8px 16px rgba(3, 10, 28, 0.3);
+        }
+        .ai-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ai-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+        .ai-title i {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            animation: pulse 1.5s infinite alternate;
+        }
+        .ai-live-tag {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            font-size: 0.55rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+        .ai-desc {
+            font-size: 0.62rem;
+            color: #94a3b8;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+        .ai-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .ai-btn-mini {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 6px 4px;
+            font-size: 0.55rem;
+            color: #cbd5e1;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.8rem;
-            box-shadow: 0 10px 25px rgba(0, 114, 255, 0.5);
-            z-index: 999;
-            text-decoration: none;
-            animation: pulseChat 2s infinite;
-        }
-        @keyframes pulseChat {
-            0% { box-shadow: 0 0 0 0 rgba(0, 114, 255, 0.7); transform: scale(1); }
-            70% { box-shadow: 0 0 0 15px rgba(0, 114, 255, 0); transform: scale(1.05); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 114, 255, 0); transform: scale(1); }
+            gap: 4px;
+            white-space: nowrap;
         }
 
-        /* FOOTER & WAVE ANIMATION */
-        .footer-wrapper {
-            position: relative;
-            background: #04060d;
-            margin-top: 5rem;
-            padding-top: 3rem;
-        }
-        .waves {
-            position: absolute;
-            top: -60px; left: 0; width: 100%; height: 60px;
-        }
-        .wave-path {
-            animation: waveMove 10s linear infinite;
-        }
-        .wave-1 { fill: rgba(4, 6, 13, 0.5); animation-duration: 7s; }
-        .wave-2 { fill: rgba(4, 6, 13, 0.8); animation-duration: 4s; }
-        .wave-3 { fill: #04060d; animation-duration: 2s; }
-
-        @keyframes waveMove {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.15); opacity: 1; }
         }
 
+        /* Danh sách chuyến hàng gần đây */
+        .app-orders-section {
+            background: #fff; border-radius: 14px;
+            padding: 14px; border: 1px solid #f1f5f9; display: flex; flex-direction: column; min-height: 100px;
+        }
+        .orders-head { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 800; margin-bottom: 1.5rem;}
+        .orders-head span:last-child { color: #2563eb; }
+        .orders-empty { text-align: center; color: var(--text-sub); margin: auto 0; }
+        .orders-empty p:first-child { font-size: 0.75rem; color: #334155; font-weight: 600; margin-bottom: 4px; }
+        .orders-empty p:last-child { font-size: 0.65rem; color: #94a3b8; }
+
+        /* Navigation Bar dưới đáy app */
+        .app-nav-bar {
+            height: 54px; background: #fff; border-top: 1px solid #f1f5f9;
+            display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; text-align: center;
+            margin-top: auto; margin-left: -14px; margin-right: -14px; margin-bottom: -14px;
+        }
+        .nav-item { font-size: 0.52rem; color: #94a3b8; font-weight: 700; display: flex; flex-direction: column; gap: 4px; cursor: pointer;}
+        .nav-item.active { color: var(--primary-blue); }
+        .nav-item i { font-size: 0.95rem; }
+
+        /* --- SƠ ĐỒ KHỐI THỐNG KÊ --- */
+        .web-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .stat-box {
+            background: #fff; padding: 1.5rem; border-radius: 20px;
+            text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.01);
+        }
+        .stat-box h3 { font-size: 2.2rem; color: var(--primary-blue); font-weight: 800; margin-bottom: 4px; }
+        .stat-box p { color: var(--text-sub); font-size: 0.9rem; font-weight: 500; }
+
+        /* FOOTER */
         footer {
+            margin-top: 4rem;
             text-align: center;
-            padding: 2rem 0;
             color: var(--text-sub);
             font-size: 0.9rem;
-            position: relative;
-            z-index: 2;
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(0,0,0,0.05);
         }
-        footer span { color: var(--primary); font-weight: 600; }
+        footer b { color: var(--primary-blue); }
     </style>
 </head>
 <body>
 
-    <!-- Canvas tạo các hạt ánh sáng bay lơ lửng -->
-    <canvas id="particles-canvas"></canvas>
-
-    <div class="glow-sphere sphere-1"></div>
-    <div class="glow-sphere sphere-2"></div>
-
     <div class="container">
-        <!-- HEADER -->
-        <header data-aos="fade-down" data-aos-duration="1000">
+        <!-- TOP WEB BAR -->
+        <header data-aos="fade-down" data-aos-duration="800">
             <div class="logo">
-                <i class="fa-solid fa-camera-retro-wave" style="color: var(--primary); animation: bounce 3s infinite;"></i> Driver<span>Cam</span>
-                <span class="badge-vip">Vip Pro v2.4.1</span>
+                <i class="fa-solid fa-cloud-arrow-down"></i> LƯU TRỮ <span>•</span>
             </div>
-            <div style="font-size: 0.9rem; color: var(--text-sub);">
-                <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> Sở hữu độc quyền: <span>Nguyễn Hải Duy</span>
+            <div class="author-badge">
+                <i class="fa-solid fa-code-branch"></i> Developer: Nguyễn Hải Duy
             </div>
         </header>
 
-        <!-- HERO SECTION -->
+        <!-- MAIN PRESENTATION HERO -->
         <main class="hero">
-            <div class="hero-text" data-aos="fade-right" data-aos-duration="1200">
-                <!-- Hiệu ứng chữ đổi màu lấp lánh -->
-                <h1 class="gradient-text">DriverCam Bản Cập Nhật Siêu Cấp</h1>
-                <p>Hệ thống nén và lưu trữ ảnh đám mây chuyên nghiệp được sở hữu bởi <b>Nguyễn Hải Duy</b>. Đồng bộ hành trình mượt mà, không lo mất mạng.</p>
+            <div class="hero-info" data-aos="fade-right" data-aos-duration="1000">
+                <h1>Hệ Thống Phân Phối Tải Ứng Dụng APK</h1>
+                <p>Nền tảng tải xuống chính thức cho ứng dụng quản lý lưu trữ dữ liệu hành trình, hình ảnh đơn hàng đồng bộ thời gian thực đám mây GCS dành riêng cho tài xế xe tải và xe công nghệ.</p>
 
-                <!-- Thẻ Download có tương tác nghiêng 3D -->
-                <div class="download-card tilt-element">
-                    <div class="card-header">
+                <!-- DOWNLOAD CARD -->
+                <div class="web-download-card">
+                    <div class="version-row">
                         <div>
-                            <h2 style="font-size: 1.3rem; margin-bottom: 4px;">Tải về file gốc định dạng .APK</h2>
-                            <p style="font-size: 0.85rem; color: var(--text-sub)">Đã quét sạch mã độc hại 100%</p>
+                            <span class="version-badge" id="webVer">Đang đồng bộ...</span>
                         </div>
-                        <span class="ver-tag">VIP PRO</span>
+                        <span class="status-badge" id="webStatus"><i class="fa-solid fa-circle-dot animate-pulse"></i> CHECKING</span>
                     </div>
 
-                    <a href="#" class="btn-glow" id="startDownload">
-                        <i class="fa-solid fa-bolt-lightning"></i> CẬP NHẬT ỨNG DỤNG NGAY
+                    <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 1.2rem;" id="webNote">
+                        Đang lấy thông số cập nhật an toàn từ Github Server...
+                    </p>
+
+                    <a href="#" class="btn-download-app" id="btnDownload">
+                        <i class="fa-solid fa-download"></i> TẢI XUỐNG BẢN VIP PRO (.APK)
                     </a>
 
-                    <div class="progress-box" id="progressBox">
-                        <div class="track"><div class="fill" id="progressFill"></div></div>
-                        <div class="details-bar">
-                            <span id="loadingStatus">Kết nối máy chủ...</span>
-                            <span id="loadingPercent">0%</span>
+                    <!-- BAR TIẾN TRÌNH CHẠY GIẢ LẬP -->
+                    <div class="progress-area" id="progressArea">
+                        <div class="progress-bg"><div class="progress-fill" id="progressFill"></div></div>
+                        <div class="progress-meta">
+                            <span id="loadState">Đang kiểm tra chứng chỉ bảo mật...</span>
+                            <span id="loadPercent">0%</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- MOCKUP PHONE 3D NGHIÊNG THEO CHUỘT -->
-            <div class="mockup-wrapper" data-aos="fade-left" data-aos-duration="1200">
-                <div class="phone tilt-element" id="phoneMockup">
-                    <div class="screen">
-                        <div class="gallery">
-                            <div class="img-box"><span class="label">Đơn hàng số #882</span></div>
-                            <div class="img-box"><span class="label">Vé trạm thu phí</span></div>
-                            <div class="img-box"><span class="label">Ảnh kiểm hàng hóa</span></div>
-                            <div class="img-box"><span class="label">Biên nhận ký tên</span></div>
+            <!-- SMARTPHONE DISPLAY MOCKUP (MATCHING NEW APP SCREEN) -->
+            <div class="mockup-container" data-aos="fade-left" data-aos-duration="1000">
+                <div class="phone-frame tilt-element">
+                    <div class="phone-screen">
+                        
+                        <!-- App Header -->
+                        <div class="app-header">
+                            <div>
+                                <div class="app-title">LƯU TRỮ</div>
+                                <div class="app-driver">TÀI XẾ: DUY NGUYEN</div>
+                            </div>
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <i class="fa-solid fa-arrow-right-from-bracket" style="color: #ef4444; font-size: 0.95rem;"></i>
+                                <div class="avatar-circle">D</div>
+                            </div>
                         </div>
-                        <div class="cam-btn"><i class="fa-solid fa-camera-viewfinder"></i> CHỤP ẢNH TÀI XẾ</div>
+
+                        <!-- Thẻ chỉ số Cloud & Đồng bộ -->
+                        <div class="app-stats-grid">
+                            <div class="app-card card-cloud">
+                                <div class="card-tag-mini">GOOGLE CLOUD</div>
+                                <div>
+                                    <div class="card-value">0</div>
+                                    <div class="card-label">Ảnh đã lưu</div>
+                                </div>
+                            </div>
+                            <div class="app-card card-sync">
+                                <div class="card-tag-mini">CHƯA ĐỒNG BỘ</div>
+                                <div>
+                                    <div class="card-value">00</div>
+                                    <div class="card-label">Chờ tải lên...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái Online -->
+                        <div class="app-network-status">
+                            <div class="net-text">
+                                <i class="fa-solid fa-wifi"></i> MẠNG ONLINE
+                            </div>
+                            <div class="toggle-switch"></div>
+                        </div>
+
+                        <!-- Thông báo MOMO từ Duy -->
+                        <div class="app-notice-box">
+                            <div class="notice-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                            <div class="notice-content">
+                                <h4>Thông báo từ điều hành</h4>
+                                <p>Các bạn có thể donate vào MOMO 0372648964 NGUYEN HAI DUY ủng hộ mình nha</p>
+                            </div>
+                        </div>
+
+                        <!-- Nút Chụp ảnh lớn -->
+                        <div class="btn-app-camera">
+                            <div class="camera-icon-box"><i class="fa-solid fa-camera"></i></div>
+                            <div class="camera-text">
+                                <h4>CHỤP ẢNH MỚI</h4>
+                                <p>TỰ ĐỘNG TẢI LÊN CLOUD GCS</p>
+                            </div>
+                        </div>
+
+                        <!-- MỚI: Khối trợ lý tài xế AI Copilot -->
+                        <div class="app-ai-copilot">
+                            <div class="ai-header">
+                                <div class="ai-title">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> TRỢ LÝ TÀI XẾ AI COPILOT
+                                </div>
+                                <span class="ai-live-tag">LIVE AI</span>
+                            </div>
+                            <div class="ai-desc">
+                                Hỏi thời tiết hành trình, mẹo chống ngủ gật đêm khuya, tính lượng dầu tiêu thụ hoặc dịch văn bản tài liệu bằng trí tuệ nhân tạo Gemini 1.5.
+                            </div>
+                            <div class="ai-buttons-grid">
+                                <div class="ai-btn-mini"><i class="fa-solid fa-cloud-sun" style="color: #38bdf8;"></i> Thời tiết</div>
+                                <div class="ai-btn-mini"><i class="fa-solid fa-eye" style="color: #f87171;"></i> Tránh ngủ gật</div>
+                                <div class="ai-btn-mini"><i class="fa-solid fa-gas-pump" style="color: #4ade80;"></i> Tiết kiệm dầu</div>
+                            </div>
+                        </div>
+
+                        <!-- Danh sách chuyến hàng rỗng -->
+                        <div class="app-orders-section">
+                            <div class="orders-head">
+                                <span>CHUYỂN HÀNG GẦN ĐÂY</span>
+                                <span>XEM TẤT CẢ</span>
+                            </div>
+                            <div class="orders-empty">
+                                <p>Chưa có chuyến hàng nào</p>
+                                <p>Nhấn Chụp ảnh mới để bắt đầu</p>
+                            </div>
+                        </div>
+
+                        <!-- Thanh Menu chân app -->
+                        <div class="app-nav-bar">
+                            <div class="nav-item active"><i class="fa-solid fa-house"></i>CHÍNH</div>
+                            <div class="nav-item"><i class="fa-solid fa-clock-rotate-left"></i>LỊCH SỬ</div>
+                            <div class="nav-item"><i class="fa-solid fa-cloud"></i>KHO MÁY</div>
+                            <div class="nav-item"><i class="fa-solid fa-arrows-rotate"></i>ĐỒNG BỘ</div>
+                            <div class="nav-item"><i class="fa-solid fa-gear"></i>CÀI ĐẶT</div>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- SECTION: THỐNG KÊ ĐỘNG -->
-        <section class="stats-section" data-aos="fade-up">
-            <div class="stat-card">
-                <h2 class="counter" data-target="98">0</h2>
-                <p>％ Tài xế phản hồi cực tốt</p>
+        <!-- WEB ANALYTICS BLOCKS -->
+        <section class="web-stats" data-aos="fade-up">
+            <div class="stat-box">
+                <h3><span class="counter" data-target="100">0</span>%</h3>
+                <p>Bảo mật chống mã độc</p>
             </div>
-            <div class="stat-card">
-                <h2><span class="counter" data-target="3">0</span>.5x</h2>
-                <p>Tiết kiệm băng thông dữ liệu 4G</p>
+            <div class="stat-box">
+                <h3>GCS + GEMINI</h3>
+                <p>Tích hợp Cloud và Trợ lý AI thông minh</p>
             </div>
-            <div class="stat-card">
-                <h2><span class="counter" data-target="1500">0</span>+</h2>
-                <p>Cuốc xe đồng bộ thành công mỗi ngày</p>
-            </div>
-        </section>
-
-        <!-- SECTION: HƯỚNG DẪN CÀI ĐẶT APK -->
-        <section class="guide-section">
-            <h2 data-aos="fade-up">Hướng Dẫn Triển Khai Nhanh</h2>
-            <div class="guide-grid">
-                <div class="guide-step tilt-element" data-aos="fade-up" data-aos-delay="100">
-                    <div class="step-number">1</div>
-                    <h3>Tải Tệp Tin</h3>
-                    <p>Nhấp vào nút hệ thống tự động tải file nén apk an toàn về máy điện thoại Android của bạn.</p>
-                </div>
-                <div class="guide-step tilt-element" data-aos="fade-up" data-aos-delay="200">
-                    <div class="step-number">2</div>
-                    <h3>Cấp Quyền Cài</h3>
-                    <p>Mở file vừa tải, chọn cho phép cài đặt ứng dụng từ nguồn không xác định để tiếp tục.</p>
-                </div>
-                <div class="guide-step tilt-element" data-aos="fade-up" data-aos-delay="300">
-                    <div class="step-number">3</div>
-                    <h3>Chạy Hành Trình</h3>
-                    <p>Đăng nhập tài khoản tài xế của bạn, phần mềm tự kích hoạt tính năng nén ảnh thông minh.</p>
-                </div>
+            <div class="stat-box">
+                <h3><span class="counter" data-target="24">0</span>/7</h3>
+                <p>Hỗ trợ đồng bộ ngoại tuyến</p>
             </div>
         </section>
 
-        <!-- SECTION: ĐÁNH GIÁ TÀI XẾ (MARQUEE) -->
-        <section class="review-section" data-aos="fade-up">
-            <h2>Anh Em Tài Xế Nói Gì Về Bản Cập Nhật?</h2>
-            <div class="marquee-container">
-                <div class="review-card">
-                    <div class="driver-meta"><div>👨‍✈️</div><strong>Anh Tuấn (GrabCar)</strong></div>
-                    <p>"Bản cập nhật của anh Duy quá đỉnh, chụp ảnh nét căng, tự động ghi vị trí tọa độ GPS."</p>
-                </div>
-                <div class="review-card">
-                    <div class="driver-meta"><div>🚛</div><strong>Anh Hùng (Xe Tải)</strong></div>
-                    <p>"Máy mát rượi, bật chạy ngầm cả ngày không lo tốn pin tốn mạng. Cho 5 sao luôn!"</p>
-                </div>
-                <div class="review-card">
-                    <div class="driver-meta"><div>🛵</div><strong>Anh Minh (Shipper)</strong></div>
-                    <p>"Xuống hầm sâu mất sóng chụp ảnh vẫn lưu lại tốt, lên mặt đất tự động đẩy ảnh lên hệ thống."</p>
-                </div>
-                <!-- Nhân đôi chuỗi thẻ -->
-                <div class="review-card">
-                    <div class="driver-meta"><div>👨‍✈️</div><strong>Anh Tuấn (GrabCar)</strong></div>
-                    <p>"Bản cập nhật của anh Duy quá đỉnh, chụp ảnh nét căng, tự động ghi vị trí tọa độ GPS."</p>
-                </div>
-                <div class="review-card">
-                    <div class="driver-meta"><div>🚛</div><strong>Anh Hùng (Xe Tải)</strong></div>
-                    <p>"Máy mát rượi, bật chạy ngầm cả ngày không lo tốn pin tốn mạng. Cho 5 sao luôn!"</p>
-                </div>
-                <div class="review-card">
-                    <div class="driver-meta"><div>🛵</div><strong>Anh Minh (Shipper)</strong></div>
-                    <p>"Xuống hầm sâu mất sóng chụp ảnh vẫn lưu lại tốt, lên mặt đất tự động đẩy ảnh lên hệ thống."</p>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- KHỐI SÓNG BIỂN CHUYỂN ĐỘNG & FOOTER -->
-    <div class="footer-wrapper">
-        <svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 -20 1200 60" preserveAspectRatio="none">
-            <path class="wave-path wave-1" d="M0,0 Q300,40 600,0 T1200,0 L1200,40 L0,40 Z"/>
-            <path class="wave-path wave-2" d="M0,10 Q300,30 600,10 T1200,10 L1200,40 L0,40 Z"/>
-            <path class="wave-path wave-3" d="M0,20 Q300,20 600,20 T1200,20 L1200,40 L0,40 Z"/>
-        </svg>
         <footer>
-            <p>© 2026 Bản quyền phần mềm thuộc sở hữu độc quyền của <span>Nguyễn Hải Duy</span>.</p>
-            <p style="font-size: 0.75rem; color: var(--text-sub); margin-top: 5px;">Hệ thống tối ưu và tăng tốc hành trình tài xế Việt Nam.</p>
+            <p>© 2026 Bản quyền phân phối phần mềm thuộc về <b>Nguyễn Hải Duy</b></p>
         </footer>
     </div>
 
-    <!-- BONG BÓNG CHAT HỖ TRỢ -->
-    <a href="https://zalo.me" target="_blank" class="floating-chat">
-        <i class="fa-solid fa-headset"></i>
-    </a>
-
-    <!-- JAVASCRIPT ANIMATION NÂNG CAO -->
+    <!-- Script điều khiển hiệu ứng và xử lý bất đồng bộ dữ liệu -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ once: false });
+        AOS.init({ once: true });
 
-        /* --- 1. HIỆU ỨNG HẠT ÁNH SÁNG BAY LƠ LỬNG (PARTICLES) --- */
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        // Cấu hình URL đồng bộ cấu hình tự động của Duy
+        const CONFIG_API = "https://duyne789.github.io/luutru51/update.json";
+        let TARGET_DOWNLOAD_LINK = "#";
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * -0.5 - 0.1;
-                this.alpha = Math.random() * 0.5 + 0.2;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.y < 0) {
-                    this.y = canvas.height;
-                    this.x = Math.random() * canvas.width;
-                }
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.fillStyle = '#ff7b00';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
+        async function fetchAppMetadata() {
+            try {
+                const res = await fetch(CONFIG_API, { cache: "no-cache" });
+                if (!res.ok) throw new Error();
+                const json = await res.json();
+                
+                document.getElementById('webVer').innerText = `Bản cập nhật ${json.version || 'v2.5.0'}`;
+                document.getElementById('webStatus').innerHTML = `<i class="fa-solid fa-circle-dot"></i> ONLINE`;
+                document.getElementById('webStatus').style.color = '#10b981';
+                document.getElementById('webStatus').style.background = 'rgba(16,185,129,0.1)';
+                if(json.note) document.getElementById('webNote').innerText = json.note;
+                
+                TARGET_DOWNLOAD_LINK = json.download_url || "#";
+            } catch (e) {
+                document.getElementById('webVer').innerText = "Bản Offline v2.4.0";
+                document.getElementById('webStatus').innerText = "OFFLINE SYSTEM";
+                document.getElementById('webStatus').style.color = '#ef4444';
             }
         }
 
-        for (let i = 0; i < 50; i++) { particles.push(new Particle()); }
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchAppMetadata();
+            setup3DEffect();
+            setupNumberCounters();
+            setupDownloadTrigger();
+        });
+
+        // Hiệu ứng nghiêng 3D khi rê chuột qua thiết bị di động
+        function setup3DEffect() {
+            const elements = document.querySelectorAll('.tilt-element');
+            elements.forEach(el => {
+                el.addEventListener('mousemove', (e) => {
+                    const box = el.getBoundingClientRect();
+                    const horizontal = e.clientX - box.left - (box.width / 2);
+                    const vertical = e.clientY - box.top - (box.height / 2);
+                    el.style.transform = `rotateY(${horizontal / (box.width / 2) * 8}deg) rotateX(${-vertical / (box.height / 2) * 8}deg)`;
+                });
+                el.addEventListener('mouseleave', () => {
+                    el.style.transform = `rotateY(0deg) rotateX(0deg)`;
+                });
+            });
         }
-        animateParticles();
 
-        /* --- 2. HIỆU ỨNG NGHIÊNG 3D THEO MOUSE MƯỢT MÀ --- */
-        const tiltElements = document.querySelectorAll('.tilt-element');
-        tiltElements.forEach(el => {
-            el.addEventListener('mousemove', (e) => {
-                const rect = el.getBoundingClientRect();
-                const x = e.clientX - rect.left - (rect.width/2);
-                const y = e.clientY - rect.top - (rect.height/2);
-                // Giới hạn góc nghiêng tối đa tầm 10 độ để không bị gãy giao diện
-                el.style.transform = `rotateY(${x / (rect.width/2) * 10}deg) rotateX(${-y / (rect.height/2) * 10}deg) translateY(-5px)`;
+        // Đếm số chạy tăng dần cho các khối thống kê web
+        function setupNumberCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(c => {
+                let checkObs = new IntersectionObserver((entries) => {
+                    if(entries[0].isIntersecting) {
+                        const targetVal = +c.getAttribute('data-target');
+                        let currentVal = 0;
+                        const run = () => {
+                            if(currentVal < targetVal) {
+                                currentVal += Math.ceil(targetVal / 30);
+                                if(currentVal > targetVal) currentVal = targetVal;
+                                c.innerText = currentVal;
+                                setTimeout(run, 30);
+                            }
+                        };
+                        run();
+                        checkObs.disconnect();
+                    }
+                });
+                checkObs.observe(c);
             });
-            el.addEventListener('mouseleave', () => {
-                el.style.transform = `rotateY(0deg) rotateX(0deg) translateY(0px)`;
+        }
+
+        // Giả lập tiến trình kiểm tra trước khi tải xuống file thực tế
+        function setupDownloadTrigger() {
+            document.getElementById('btnDownload').addEventListener('click', function(e) {
+                e.preventDefault();
+                const btn = this;
+                const area = document.getElementById('progressArea');
+                const fill = document.getElementById('progressFill');
+                const state = document.getElementById('loadState');
+                const percent = document.getElementById('loadPercent');
+
+                btn.style.pointerEvents = 'none';
+                btn.style.opacity = '0.6';
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang phân tích file APK an toàn...`;
+                area.style.display = 'block';
+
+                let step = 0;
+                const loop = setInterval(() => {
+                    if (step >= 100) {
+                        clearInterval(loop);
+                        state.innerText = "Yêu cầu được chấp nhận! Tiến hành tải xuống...";
+                        btn.innerHTML = `<i class="fa-solid fa-check"></i> ĐANG TẢI VỀ`;
+                        btn.style.background = '#10b981';
+                        
+                        setTimeout(() => {
+                            if(TARGET_DOWNLOAD_LINK !== "#") {
+                                window.location.href = TARGET_DOWNLOAD_LINK;
+                            } else {
+                                alert("File APK đã được tải thành công!");
+                            }
+                            btn.style.pointerEvents = 'auto';
+                            btn.style.opacity = '1';
+                        }, 600);
+                    } else {
+                        step += Math.floor(Math.random() * 8) + 3;
+                        if(step > 100) step = 100;
+                        fill.style.width = step + '%';
+                        percent.innerText = step + '%';
+                        if(step > 35) state.innerText = "Đang kiểm tra mã SHA-256 chống giả mạo...";
+                        if(step > 75) state.innerText = "Mở băng thông tải tốc độ cao đám mây...";
+                    }
+                }, 100);
             });
-        });
-
-        /* --- 3. HIỆU ỨNG CHẠY SỐ THỐNG KÊ --- */
-        const counters = document.querySelectorAll('.counter');
-        counters.forEach(counter => {
-            let observer = new IntersectionObserver((entries) => {
-                if(entries[0].isIntersecting) {
-                    const target = +counter.getAttribute('data-target');
-                    let count = 0;
-                    const update = () => {
-                        if(count < target) {
-                            count += Math.ceil(target / 40);
-                            if(count > target) count = target;
-                            counter.innerText = count;
-                            setTimeout(update, 25);
-                        }
-                    };
-                    update();
-                    observer.disconnect();
-                }
-            });
-            observer.observe(counter);
-        });
-
-        /* --- 4. XỬ LÝ DOWNLOAD GIẢ LẬP MƯỢT --- */
-        document.getElementById('startDownload').addEventListener('click', function(e) {
-            e.preventDefault();
-            const button = this;
-            const progressBox = document.getElementById('progressBox');
-            const progressFill = document.getElementById('progressFill');
-            const statusText = document.getElementById('loadingStatus');
-            const percentText = document.getElementById('loadingPercent');
-
-            button.style.pointerEvents = 'none';
-            button.style.opacity = '0.5';
-            button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Kết nối máy chủ bảo mật...`;
-            progressBox.style.display = 'block';
-
-            let count = 0;
-            const timer = setInterval(() => {
-                if (count >= 100) {
-                    clearInterval(timer);
-                    statusText.innerText = "Tệp cài đặt an toàn! Đang khởi tạo mở file...";
-                    button.innerHTML = `<i class="fa-solid fa-square-check"></i> ĐÃ TẢI XONG`;
-                    button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                    setTimeout(() => { alert("Tải xuống bản cập nhật DriverCam Pro của Nguyễn Hải Duy thành công!"); }, 200);
-                } else {
-                    count += Math.floor(Math.random() * 9) + 2;
-                    if(count > 100) count = 100;
-                    progressFill.style.width = count + '%';
-                    percentText.innerText = count + '%';
-                    if(count > 40) statusText.innerText = "Đang truyền gói dữ liệu APK...";
-                    if(count > 80) statusText.innerText = "Đang quét mã độc và chứng chỉ...";
-                }
-            }, 100);
-        });
+        }
     </script>
 </body>
 </html>
