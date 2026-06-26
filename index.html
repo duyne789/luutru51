@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DriverCam Ultra Pro - Nguyễn Hải Duy</title>
+    
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation Library CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        /* --- THIẾT LẬP HỆ THỐNG GIAO DIỆN --- */
+        :root {
+            --primary: #ff7b00;
+            --primary-glow: rgba(255, 123, 0, 0.4);
+            --bg-deep: #060913;
+            --bg-surface: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* CANVAS ĐỂ CHẠY HẠT ÁNH SÁNG NỀN */
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Đèn Neon Nền */
+        .glow-sphere {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            filter: blur(90px);
+            z-index: -2;
+        }
+        .sphere-1 { width: 700px; height: 700px; top: -10%; right: -10%; animation: floatBg 12s infinite alternate; }
+        .sphere-2 { width: 500px; height: 500px; top: 40%; left: -10%; animation: floatBg 15s infinite alternate-reverse; }
+
+        @keyframes floatBg {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(60px, 40px) scale(1.1); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo span { color: var(--primary); }
+
+        .badge-vip {
+            background: linear-gradient(135deg, #ffe600, var(--primary));
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 30px;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 4rem;
+            align-items: center;
+            padding: 6rem 0;
+        }
+
+        @media (max-width: 968px) {
+            .hero { grid-template-columns: 1fr; text-align: center; gap: 3rem; }
+            .mockup-wrapper { order: -1; }
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Hiệu ứng chữ đổi màu */
+        .gradient-text {
+            background: linear-gradient(90deg, #fff, var(--primary), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 4s linear infinite;
+        }
+
+        @keyframes shineText {
+            to { background-position: 200% center; }
+        }
+
+        .hero-text p {
+            color: var(--text-sub);
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* DOWNLOAD CARD */
+        .download-card {
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform-style: preserve-3d; /* Phục vụ cho nghiêng 3D */
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .ver-tag {
+            background: rgba(255, 123, 0, 0.15);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            animation: pulseBorder 2s infinite;
+        }
+
+        @keyframes pulseBorder {
+            0% { box-shadow: 0 0 0 0 rgba(255, 123, 0, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 123, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 123, 0, 0); }
+        }
+
+        .btn-glow {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, var(--primary), #d94100);
+            border: none;
+            border-radius: 18px;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            box-shadow: 0 10px 25px rgba(255, 123, 0, 0.4);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Hiệu ứng tia sáng quét ngang nút khi hover */
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -60%; width: 30%; height: 200%;
+            background: rgba(255,255,255,0.3);
+            transform: rotate(30deg);
+            transition: none;
+        }
+        .btn-glow:hover::after {
+            left: 140%;
+            transition: all 0.6s ease-in-out;
+        }
+
+        .btn-glow i { animation: bounce 2s infinite; }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+            60% { transform: translateY(-3px); }
+        }
+
+        /* PROGRESS BAR */
+        .progress-box { display: none; margin-top: 1.5rem; }
+        .track { background: rgba(255, 255, 255, 0.05); height: 10px; border-radius: 20px; overflow: hidden; }
+        .fill { background: linear-gradient(90deg, var(--primary), #ffb700); width: 0%; height: 100%; border-radius: 20px; box-shadow: 0 0 10px var(--primary); }
+        .details-bar { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sub); margin-top: 8px; }
+
+        /* MOCKUP PHONE 3D MOUSE TILT */
+        .mockup-wrapper { display: flex; justify-content: center; align-items: center; perspective: 1000px; }
+        .phone {
+            width: 300px;
+            height: 580px;
+            background: #000;
+            border: 10px solid #2e3a4e;
+            border-radius: 45px;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease; /* Chạy mượt theo chuột */
+        }
+
+        .screen { flex: 1; background: #0b0f19; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; }
+        .img-box { background: #151f32; border-radius: 14px; display: flex; align-items: flex-end; padding: 8px; position: relative; overflow: hidden;}
+        
+        /* Hiệu ứng quét lấp lánh trên ảnh giả lập */
+        .img-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-25deg);
+            animation: cardShine 3s infinite;
+        }
+        @keyframes cardShine { 0% { left: -100%; } 100% { left: 200%; } }
+
+        .label { background: rgba(0,0,0,0.7); font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; width: 100%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+        .cam-btn { background: var(--primary); color: #000; text-align: center; padding: 12px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; }
+
+        /* SECTION: THỐNG KÊ SỐ LIỆU CHẠY ĐỘNG */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.01);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .stat-card h2 { font-size: 2.5rem; color: var(--primary); font-weight: 800; margin-bottom: 0.5rem; }
+        .stat-card p { color: var(--text-sub); font-size: 0.95rem; }
+
+        /* SECTION: HƯỚNG DẪN CÀI ĐẶT APK */
+        .guide-section { padding: 4rem 0; }
+        .guide-section h2 { text-align: center; font-size: 2rem; margin-bottom: 3rem; font-weight: 800; }
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .guide-step { background: var(--bg-surface); padding: 2rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); position: relative; transition: border 0.3s ease;}
+        .guide-step:hover { border-color: var(--primary); }
+        .step-number { position: absolute; top: -20px; left: 20px; width: 40px; height: 40px; background: var(--primary); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; box-shadow: 0 0 15px var(--primary-glow); }
+        .guide-step h3 { margin-top: 0.5rem; margin-bottom: 1rem; font-size: 1.2rem; }
+        .guide-step p { color: var(--text-sub); font-size: 0.95rem; }
+
+        /* SECTION: ĐÁNH GIÁ TÀI XẾ (MARQUEE) */
+        .review-section { padding: 4rem 0; overflow: hidden; position: relative; }
+        .review-section h2 { text-align: center; font-size: 2rem; margin-bottom: 3rem; font-weight: 800; }
+        .marquee-container { display: flex; gap: 2rem; width: max-content; animation: marquee 25s linear infinite; }
+        .marquee-container:hover { animation-play-state: paused; }
+        .review-card { background: #0f172a; padding: 1.5rem; border-radius: 16px; width: 350px; border: 1px solid rgba(255,255,255,0.05); }
+        .driver-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* FLOATING ACTION CHAT BUTTON */
+        .floating-chat {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 10px 25px rgba(0, 114, 255, 0.5);
+            z-index: 999;
+            text-decoration: none;
+            animation: pulseChat 2s infinite;
+        }
+        @keyframes pulseChat {
+            0% { box-shadow: 0 0 0 0 rgba(0, 114, 255, 0.7); transform: scale(1); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 114, 255, 0); transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 114, 255, 0); transform: scale(1); }
+        }
+
+        /* FOOTER & WAVE ANIMATION */
+        .footer-wrapper {
+            position: relative;
+            background: #04060d;
+            margin-top: 5rem;
+            padding-top: 3rem;
+        }
+        .waves {
+            position: absolute;
+            top: -60px; left: 0; width: 100%; height: 60px;
+        }
+        .wave-path {
+            animation: waveMove 10s linear infinite;
+        }
+        .wave-1 { fill: rgba(4, 6, 13, 0.5); animation-duration: 7s; }
+        .wave-2 { fill: rgba(4, 6, 13, 0.8); animation-duration: 4s; }
+        .wave-3 { fill: #04060d; animation-duration: 2s; }
+
+        @keyframes waveMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-sub);
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 2;
+        }
+        footer span { color: var(--primary); font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas tạo các hạt ánh sáng bay lơ lửng -->
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="glow-sphere sphere-1"></div>
+    <div class="glow-sphere sphere-2"></div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header data-aos="fade-down" data-aos-duration="1000">
+            <div class="logo">
+                <i class="fa-solid fa-camera-retro-wave" style="color: var(--primary); animation: bounce 3s infinite;"></i> Driver<span>Cam</span>
+                <span class="badge-vip">Vip Pro v2.4.1</span>
+            </div>
+            <div style="font-size: 0.9rem; color: var(--text-sub);">
+                <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> Sở hữu độc quyền: <span>Nguyễn Hải Duy</span>
+            </div>
+        </header>
+
+        <!-- HERO SECTION -->
+        <main class="hero">
+            <div class="hero-text" data-aos="fade-right" data-aos-duration="1200">
+                <!-- Hiệu ứng chữ đổi màu lấp lánh -->
+                <h1 class="gradient-text">DriverCam Bản Cập Nhật Siêu Cấp</h1>
+                <p>Hệ thống nén và lưu trữ ảnh đám mây chuyên nghiệp được sở hữu bởi <b>Nguyễn Hải Duy</b>. Đồng bộ hành trình mượt mà, không lo mất mạng.</p>
+
+                <!-- Thẻ Download có tương tác nghiêng 3D -->
+                <div class="download-card tilt-element">
+                    <div class="card-header">
+                        <div>
+                            <h2 style="font-size: 1.3rem; margin-bottom: 4px;">Tải về file gốc định dạng .APK</h2>
+                            <p style="font-size: 0.85rem; color: var(--text-sub)">Đã quét sạch mã độc hại 100%</p>
+                        </div>
+                        <span class="ver-tag">VIP PRO</span>
+                    </div>
+
+                    <a href="#" class="btn-glow" id="startDownload">
+                        <i class="fa-solid fa-bolt-lightning"></i> CẬP NHẬT ỨNG DỤNG NGAY
+                    </a>
+
+                    <div class="progress-box" id="progressBox">
+                        <div class="track"><div class="fill" id="progressFill"></div></div>
+                        <div class="details-bar">
+                            <span id="loadingStatus">Kết nối máy chủ...</span>
+                            <span id="loadingPercent">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MOCKUP PHONE 3D NGHIÊNG THEO CHUỘT -->
+            <div class="mockup-wrapper" data-aos="fade-left" data-aos-duration="1200">
+                <div class="phone tilt-element" id="phoneMockup">
+                    <div class="screen">
+                        <div class="gallery">
+                            <div class="img-box"><span class="label">Đơn hàng số #882</span></div>
+                            <div class="img-box"><span class="label">Vé trạm thu phí</span></div>
+                            <div class="img-box"><span class="label">Ảnh kiểm hàng hóa</span></div>
+                            <div class="img-box"><span class="label">Biên nhận ký tên</span></div>
+                        </div>
+                        <div class="cam-btn"><i class="fa-solid fa-camera-viewfinder"></i> CHỤP ẢNH TÀI XẾ</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- SECTION: THỐNG KÊ ĐỘNG -->
+        <section class="stats-section" data-aos="fade-up">
+            <div class="stat-card">
+                <h2 class="counter" data-target="98">0</h2>
+                <p>％ Tài xế phản hồi cực tốt</p>
+            </div>
+            <div class="stat-card">
+                <h2><span class="counter" data-target="3">0</span>.5x</h2>
+                <p>Tiết kiệm băng thông dữ liệu 4G</p>
+            </div>
+            <div class="stat-card">
+                <h2><span class="counter" data-target="1500">0</span>+</h2>
+                <p>Cuốc xe đồng bộ thành công mỗi ngày</p>
+            </div>
+        </section>
+
+        <!-- SECTION: HƯỚNG DẪN CÀI ĐẶT APK -->
+        <section class="guide-section">
+            <h2 data-aos="fade-up">Hướng Dẫn Triển Khai Nhanh</h2>
+            <div class="guide-grid">
+                <div class="guide-step tilt-element" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-number">1</div>
+                    <h3>Tải Tệp Tin</h3>
+                    <p>Nhấp vào nút hệ thống tự động tải file nén apk an toàn về máy điện thoại Android của bạn.</p>
+                </div>
+                <div class="guide-step tilt-element" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-number">2</div>
+                    <h3>Cấp Quyền Cài</h3>
+                    <p>Mở file vừa tải, chọn cho phép cài đặt ứng dụng từ nguồn không xác định để tiếp tục.</p>
+                </div>
+                <div class="guide-step tilt-element" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-number">3</div>
+                    <h3>Chạy Hành Trình</h3>
+                    <p>Đăng nhập tài khoản tài xế của bạn, phần mềm tự kích hoạt tính năng nén ảnh thông minh.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: ĐÁNH GIÁ TÀI XẾ (MARQUEE) -->
+        <section class="review-section" data-aos="fade-up">
+            <h2>Anh Em Tài Xế Nói Gì Về Bản Cập Nhật?</h2>
+            <div class="marquee-container">
+                <div class="review-card">
+                    <div class="driver-meta"><div>👨‍✈️</div><strong>Anh Tuấn (GrabCar)</strong></div>
+                    <p>"Bản cập nhật của anh Duy quá đỉnh, chụp ảnh nét căng, tự động ghi vị trí tọa độ GPS."</p>
+                </div>
+                <div class="review-card">
+                    <div class="driver-meta"><div>🚛</div><strong>Anh Hùng (Xe Tải)</strong></div>
+                    <p>"Máy mát rượi, bật chạy ngầm cả ngày không lo tốn pin tốn mạng. Cho 5 sao luôn!"</p>
+                </div>
+                <div class="review-card">
+                    <div class="driver-meta"><div>🛵</div><strong>Anh Minh (Shipper)</strong></div>
+                    <p>"Xuống hầm sâu mất sóng chụp ảnh vẫn lưu lại tốt, lên mặt đất tự động đẩy ảnh lên hệ thống."</p>
+                </div>
+                <!-- Nhân đôi chuỗi thẻ -->
+                <div class="review-card">
+                    <div class="driver-meta"><div>👨‍✈️</div><strong>Anh Tuấn (GrabCar)</strong></div>
+                    <p>"Bản cập nhật của anh Duy quá đỉnh, chụp ảnh nét căng, tự động ghi vị trí tọa độ GPS."</p>
+                </div>
+                <div class="review-card">
+                    <div class="driver-meta"><div>🚛</div><strong>Anh Hùng (Xe Tải)</strong></div>
+                    <p>"Máy mát rượi, bật chạy ngầm cả ngày không lo tốn pin tốn mạng. Cho 5 sao luôn!"</p>
+                </div>
+                <div class="review-card">
+                    <div class="driver-meta"><div>🛵</div><strong>Anh Minh (Shipper)</strong></div>
+                    <p>"Xuống hầm sâu mất sóng chụp ảnh vẫn lưu lại tốt, lên mặt đất tự động đẩy ảnh lên hệ thống."</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- KHỐI SÓNG BIỂN CHUYỂN ĐỘNG & FOOTER -->
+    <div class="footer-wrapper">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 -20 1200 60" preserveAspectRatio="none">
+            <path class="wave-path wave-1" d="M0,0 Q300,40 600,0 T1200,0 L1200,40 L0,40 Z"/>
+            <path class="wave-path wave-2" d="M0,10 Q300,30 600,10 T1200,10 L1200,40 L0,40 Z"/>
+            <path class="wave-path wave-3" d="M0,20 Q300,20 600,20 T1200,20 L1200,40 L0,40 Z"/>
+        </svg>
+        <footer>
+            <p>© 2026 Bản quyền phần mềm thuộc sở hữu độc quyền của <span>Nguyễn Hải Duy</span>.</p>
+            <p style="font-size: 0.75rem; color: var(--text-sub); margin-top: 5px;">Hệ thống tối ưu và tăng tốc hành trình tài xế Việt Nam.</p>
+        </footer>
+    </div>
+
+    <!-- BONG BÓNG CHAT HỖ TRỢ -->
+    <a href="https://zalo.me" target="_blank" class="floating-chat">
+        <i class="fa-solid fa-headset"></i>
+    </a>
+
+    <!-- JAVASCRIPT ANIMATION NÂNG CAO -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ once: false });
+
+        /* --- 1. HIỆU ỨNG HẠT ÁNH SÁNG BAY LƠ LỬNG (PARTICLES) --- */
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * -0.5 - 0.1;
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = '#ff7b00';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 50; i++) { particles.push(new Particle()); }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        /* --- 2. HIỆU ỨNG NGHIÊNG 3D THEO MOUSE MƯỢT MÀ --- */
+        const tiltElements = document.querySelectorAll('.tilt-element');
+        tiltElements.forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left - (rect.width/2);
+                const y = e.clientY - rect.top - (rect.height/2);
+                // Giới hạn góc nghiêng tối đa tầm 10 độ để không bị gãy giao diện
+                el.style.transform = `rotateY(${x / (rect.width/2) * 10}deg) rotateX(${-y / (rect.height/2) * 10}deg) translateY(-5px)`;
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = `rotateY(0deg) rotateX(0deg) translateY(0px)`;
+            });
+        });
+
+        /* --- 3. HIỆU ỨNG CHẠY SỐ THỐNG KÊ --- */
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            let observer = new IntersectionObserver((entries) => {
+                if(entries[0].isIntersecting) {
+                    const target = +counter.getAttribute('data-target');
+                    let count = 0;
+                    const update = () => {
+                        if(count < target) {
+                            count += Math.ceil(target / 40);
+                            if(count > target) count = target;
+                            counter.innerText = count;
+                            setTimeout(update, 25);
+                        }
+                    };
+                    update();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(counter);
+        });
+
+        /* --- 4. XỬ LÝ DOWNLOAD GIẢ LẬP MƯỢT --- */
+        document.getElementById('startDownload').addEventListener('click', function(e) {
+            e.preventDefault();
+            const button = this;
+            const progressBox = document.getElementById('progressBox');
+            const progressFill = document.getElementById('progressFill');
+            const statusText = document.getElementById('loadingStatus');
+            const percentText = document.getElementById('loadingPercent');
+
+            button.style.pointerEvents = 'none';
+            button.style.opacity = '0.5';
+            button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Kết nối máy chủ bảo mật...`;
+            progressBox.style.display = 'block';
+
+            let count = 0;
+            const timer = setInterval(() => {
+                if (count >= 100) {
+                    clearInterval(timer);
+                    statusText.innerText = "Tệp cài đặt an toàn! Đang khởi tạo mở file...";
+                    button.innerHTML = `<i class="fa-solid fa-square-check"></i> ĐÃ TẢI XONG`;
+                    button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    setTimeout(() => { alert("Tải xuống bản cập nhật DriverCam Pro của Nguyễn Hải Duy thành công!"); }, 200);
+                } else {
+                    count += Math.floor(Math.random() * 9) + 2;
+                    if(count > 100) count = 100;
+                    progressFill.style.width = count + '%';
+                    percentText.innerText = count + '%';
+                    if(count > 40) statusText.innerText = "Đang truyền gói dữ liệu APK...";
+                    if(count > 80) statusText.innerText = "Đang quét mã độc và chứng chỉ...";
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
