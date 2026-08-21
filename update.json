@@ -1,8 +1,5 @@
-{
-  "versionCode": 51,
-  "versionName": "v5.1",
-  "changelog": "⚡ Nâng cấp giao diện tối ưu\n📖 Thêm xuất file dự phòng\n🔊 Thêm voice\n🌐 Thêm update online\n✍️ Thêm chữ ký\n🔒 Thêm bảo mật bằng vân tay\n⚠️ Lưu ý: Hãy backup lại tất cả phòng trường hợp xấu",
-  "adminNotification": " Big Update\n 💬 Liên hệ Admin nếu gặp lỗi:\n📞 Zalo: 0896374551",
-  "apkUrl": "https://raw.githubusercontent.com/duyne789/luutru51/refs/heads/main/app-release.apk",
-  "forceUpdate": false
-}
+ "latestVersion": "v5.0",
+  "latestVersion": "v5.1",
+  "releaseNotes": "- Tối ưu giao diện/n bấm vao nút phía dưới để cập nhật app",
+  "adminNotification": "LƯU Ý:nếu muốn an toàn hãy backup dữ liệu",
+  "downloadUrl": "https://raw.githubusercontent.com/duyne789/luutru51/refs/heads/main/app-release.apk"
