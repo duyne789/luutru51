@@ -1,6 +1,6 @@
 {
-  "versionCode": 52,
-  "versionName": "v5.2",
+  "versionCode": 51,
+  "versionName": "v5.1",
   "changelog": "⚡ Nâng cấp giao diện tối ưu\n📖 Thêm xuất file dự phòng\n🔊 Thêm voice\n🌐 Thêm update online\n✍️ Thêm chữ ký\n🔒 Thêm bảo mật bằng vân tay\n⚠️ Lưu ý: Hãy backup lại tất cả phòng trường hợp xấu",
   "adminNotification": "Update Big Data",
   "apkUrl": "https://raw.githubusercontent.com/duyne789/luutru51/refs/heads/main/app-release.apk",
