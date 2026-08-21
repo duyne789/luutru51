@@ -1,4 +1,8 @@
-  "latestVersion": "v5.1.2.8",
-  "releaseNotes": "- ⚡ Tối ưu giao diện người dùng.\n- 🗺️ Thêm Xuất File Dự Phòng.\n- Thêm Cấc Chức Năng Khác.",
-  "adminNotification": "Tối ưu hóa giao diện người dùng",
-  "downloadUrl": "https://duyne789.github.io/luutru51/"
+{
+  "versionCode": 52,
+  "versionName": "v5.2",
+  "changelog": "⚡ Nâng cấp giao diện tối ưu\n📖 Thêm Xuất File Dự Phòng\n🔊 Thêm nói AI",
+  "adminNotification": "Các bạn có thể donate vào MOMO 0372648984 NGUYỄN HẢI DUY ủng hộ mình nha",
+  "apkUrl": "https://raw.githubusercontent.com/duyne789/luutru51/refs/heads/main/app-release.apk",
+  "forceUpdate": false
+}
